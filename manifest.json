@@ -1,0 +1,13 @@
+{
+    "id": "MMiO",
+    "author": ["BestSpark687090"],
+    "name": "Mod Menu in Options",
+    "description": "An attempt to add any mod options to the pause menu.",
+    "badge_colour": "ff0000",
+    "badge_text_colour": "00ff00",
+    "prefix": "mmio",
+    "version": "1.0.0",
+    "main_file": "main.lua",
+    "dependencies": ["Steamodded (>=1.0.0~BETA-0404a)"],
+    "priority":-1
+}
