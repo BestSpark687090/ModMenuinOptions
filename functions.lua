@@ -74,9 +74,11 @@ function G.FUNCS.mmio_options(e)
         definition = t,
     })
     -- im just gonna do it
+    if G.OVERLAY_MENU:get_UIE_by_ID("spl_uhhhh") then
     local not_gonna_sugarcoat_it = SMODS.deepfind(G.OVERLAY_MENU:get_UIE_by_ID("spl_uhhhh").UIBox.parent.parent.parent.parent,'button_UIE','i',false)[3].table.button_UIE
     not_gonna_sugarcoat_it.T.w=0.56
     not_gonna_sugarcoat_it.T.h=0.56
+    end
     return t
 end
 -- This is literally THE EXACT COPY from the code. Why is it working now??????
