@@ -118,7 +118,9 @@ end
 function G.FUNCS.mmio_generate_mod_select_menu()
     local mod_options = {}
     for k, v in pairs(mmio.config.mods_in_options) do
-        if not v == false then
+        -- make sure it's not disabled so it doesnt show up js to be safe
+        local mod = next(SMODS.find_mod(k))
+        if not v == false and mod ~= nil then
             -- make buttons for each mod
             mod_options[#mod_options + 1] = UIBox_button({
                 label = { k },
@@ -137,7 +139,7 @@ function G.FUNCS.mmio_generate_mod_select_menu()
             -- here we go i guess.
             {
                 n = G.UIT.R,
-                config = { colour = G.C.RED, minw = 10, r = 0, minh = 0.75, align = "cm" },
+                config = { colour = G.C.MULT, minw = 10, r = 0, minh = 0.75, align = "cm" },
                 nodes = {
                     { n = G.UIT.T, config = { text = "Select a Mod:", scale = 0.5, colour = G.C.WHITE, juice = true, align = "cm" } },
                 }
