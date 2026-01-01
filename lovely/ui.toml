@@ -17,6 +17,10 @@ pattern = "{n=G.UIT.T, config={text = v, scale = 0.25, colour = G.C.UI.TEXT_LIGH
 match_indent = true
 position = "at"
 payload = "{n=G.UIT.T, config={text = v, id=args.id, scale = args.info_scale, colour = G.C.UI.TEXT_LIGHT}}"
+# uhh?
+# this one kinda helps a little bit with errors i think.
+# oh wait this is what's getting rid of the checkmark isnt it
+# cause its trying to set the role if its an object
 [[patches]]
 [patches.pattern]
 target="engine/ui.lua"
@@ -24,22 +28,52 @@ pattern="self.config.object:set_role(self.config.role or {role_type = 'Minor', m
 match_indent = true
 position="at"
 payload="if self.config.object then self.config.object:set_role(self.config.role or {role_type = 'Minor', major = self, xy_bond = 'Strong', wh_bond = 'Weak', scale_bond = 'Weak'}) end"
+# heres the part im constantly trying to fix
+# [[patches]]
+# [patches.pattern]
+# target="engine/ui.lua"
+# pattern="""
+# if v.UIT == G.UIT.T or v.UIT == G.UIT.B or v.UIT == G.UIT.O then
+#     v:align(0,0.5*(self.T.h - 2*padding - v.T.h))
+# else
+#     v:align(0,0.5*(self.T.h - self.content_dimensions.h))
+# end"""
+# match_indent = true
+# position="before"
+# # # payload="if v.T.h == nil then v.T.mmio='mmio_BAD'\nmmio.the_bad_one = v\nv.T.w = v.parent.T.w\nv.T.h = v.parent.T.h end"
+# # # payload="v:initialize_VT()"
+# # # eval SMODS.deepfind(G.OVERLAY_MENU:get_UIE_by_ID("spl_uhhhh").UIBox.parent.parent.parent.parent,'button_UIE','i',false)[3].table.button_UIE
+# # # x=11.1, y=5.822
+# payload="""if v.T.h == nil then print('[mmio] this is bad...')
+# v.T.h = 0.56
+# v.T.w = 0.56
+# end"""
 [[patches]]
 [patches.pattern]
-target="engine/ui.lua"
-pattern="""
-if v.UIT == G.UIT.T or v.UIT == G.UIT.B or v.UIT == G.UIT.O then
-    v:align(0,0.5*(self.T.h - 2*padding - v.T.h))
-else
-    v:align(0,0.5*(self.T.h - self.content_dimensions.h))
-end"""
+target = "engine/ui.lua"
+pattern = "function UIElement:set_alignments()"
 match_indent = true
-position="before"
-# payload="if v.T.h == nil then v.T.mmio='mmio_BAD'\nmmio.the_bad_one = v\nv.T.w = v.parent.T.w\nv.T.h = v.parent.T.h end"
-# payload="v:initialize_VT()"
-# eval SMODS.deepfind(G.OVERLAY_MENU:get_UIE_by_ID("spl_uhhhh").UIBox.parent.parent.parent.parent,'button_UIE','i',false)[3].table.button_UIE
-# x=11.1, y=5.822
-payload="""if v.T.h == nil then print('[mmio] this is bad...')\nv.T.h = 0.56\nv.T.w = 0.56\nv.T.scale=1\nend"""
+position = "at"
+payload = """function UIElement:set_alignments()
+    for k, v in pairs(self.children) do
+        _w, _h = v.parent:set_wh()
+        if v.T and not v.T.h then
+            v.T.h = _h or 2
+        end
+        if v.T and not v.T.w then
+            v.T.w = _w or 2
+        end
+    end"""
+# [[patches]]
+# [patches.pattern]
+# target="engine/ui.lua"
+# pattern="v:align(0,0.5*(self.T.h - 2*padding - v.T.h))"
+# match_indent = true
+# position="at"
+# payload="v:align(0,0.5*(self.T.h - 2*padding - 0.56))"
+
+
+# added a change function argument to create_tabs
 [[patches]]
 [patches.pattern]
 target="functions/UI_definitions.lua"

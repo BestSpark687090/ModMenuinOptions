@@ -30,10 +30,10 @@ function G.FUNCS.mmio_options(e)
         main_tab = {
             [1] = {
                 label = "Config",
-                -- chosen = true,
-                -- button = "change_tab",
+                chosen = true,
+                button = "mmio_change_tab",
+                colour = G.C.BOOSTER,
                 tab_definition_function = function()
-                    print("[mmio?] doing main tab type stuff")
                     return config_tab_content
                 end,
             }
@@ -43,16 +43,15 @@ function G.FUNCS.mmio_options(e)
         for k, v in ipairs(tabs) do
             v["button"] = "mmio_change_tab"
             local v_t = v
-            if v_t.colour == nil then
-                v_t.colour = G.C.BOOSTER
-            end
+            -- if v_t.colour == nil then
+            --     v_t.colour = G.C.BOOSTER
+            -- end
             table.insert(main_tab, v_t)
         end
     end
 
     main_tab[1].chosen = true
-
-    mmio.log_ts = true
+    mmio.main_tab = main_tab
     local t = create_UIBox_generic_options({
         back_func = "mmio_generate_mod_select_menu",
         contents = {
@@ -63,7 +62,7 @@ function G.FUNCS.mmio_options(e)
                     create_tabs({
                         tabs = main_tab,
                         colour = G.C.BOOSTER,
-                        -- change_func = "mmio_change_tab"
+                        change_func = "mmio_change_tab"
                     }),
                 },
             },
@@ -74,31 +73,38 @@ function G.FUNCS.mmio_options(e)
         definition = t,
     })
     -- im just gonna do it
-    if G.OVERLAY_MENU:get_UIE_by_ID("spl_uhhhh") then
-    local not_gonna_sugarcoat_it = SMODS.deepfind(G.OVERLAY_MENU:get_UIE_by_ID("spl_uhhhh").UIBox.parent.parent.parent.parent,'button_UIE','i',false)[3].table.button_UIE
-    not_gonna_sugarcoat_it.T.w=0.56
-    not_gonna_sugarcoat_it.T.h=0.56
-    end
     return t
 end
--- This is literally THE EXACT COPY from the code. Why is it working now??????
 function G.FUNCS.mmio_change_tab(e)
-    -- print("[mmio] changed tabs? to uhmmm", e)
     if not e then return end
-    if e.config.chosen then return end -- alr chosen, but this won't help...
-    local _infotip_object = G.OVERLAY_MENU:get_UIE_by_ID('overlay_menu_infotip')
-    if _infotip_object and _infotip_object.config.object then
-        _infotip_object.config.object:remove()
-        _infotip_object.config.object = Moveable()
-    end
-
     local tab_contents = e.UIBox:get_UIE_by_ID('tab_contents')
-    tab_contents.config.object:remove()
+    if not tab_contents then return end
+    tab_contents.children = {}
+    local new_def = e.config.ref_table.tab_definition_function(e.config.ref_table.tab_definition_function_args)
     tab_contents.config.object = UIBox {
-        definition = e.config.ref_table.tab_definition_function(e.config.ref_table.tab_definition_function_args),
+        definition = new_def,
         config = { offset = { x = 0, y = 0 }, parent = tab_contents, type = 'cm' }
     }
     tab_contents.UIBox:recalculate()
+end
+function G.FUNCS.mmio_do_it()
+    if G.OVERLAY_MENU:get_UIE_by_ID("spl_uhhhh") then
+        local not_gonna_sugarcoat_it = mmio.tab.UIRoot.children[1].children[1].children[1].children[1].children[1]
+        .children[2].children[1].config.object.UIRoot.children[1].children[1].children[3]--.children[1]--.children[1]
+        --.children[2].children[1].children[1].children[1]
+        not_gonna_sugarcoat_it:mmio_set_wh()
+        -- not_gonna_sugarcoat_it.T.w=0.56
+        -- not_gonna_sugarcoat_it.T.h=0.56
+    end
+end
+
+function UIElement:mmio_set_wh()
+    -- print(self.T.h)
+    self.T.w = 0.56
+    self.T.h = 0.56
+    for k, v in pairs(self.children) do
+        v:mmio_set_wh()
+    end
 end
 
 function G.FUNCS.mmio_back_to_select(e)
@@ -155,9 +161,8 @@ function G.FUNCS.mmio_generate_mod_select_menu()
             },
         },
     })
-    mmio.log_ts = true
     G.FUNCS.overlay_menu({
         definition = t,
     })
-    return ui
+    -- return ui
 end
