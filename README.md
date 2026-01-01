@@ -12,6 +12,8 @@ download today using the code button.
 
 ### features
 * the mmio mod select menu in your options menu
+* can enable or disable
+* can place on either the top or the bottom of the options menu
 
 
 ### known issues:

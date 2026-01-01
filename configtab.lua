@@ -22,6 +22,17 @@ function mmio.create_menu()
         end
     end
     local current_selected = ""
+    -- Enable button, cause we kinda need that...
+    settings.nodes[#settings.nodes+1] = create_toggle({
+        label = "Enable MMiO",
+        ref_table = mmio.config,
+        ref_value = 'enabled',
+        callback = mmio:save_config(),
+        info = { "Enable or disable the Mod Menu in Options mod." },
+        info_scale = 0.35,
+    })
+
+    --#region Left and Right Nodes
     local left_node = {}
     local cycle = create_option_cycle({
         label = "Enabled Mods",
@@ -72,7 +83,24 @@ function mmio.create_menu()
             { n = G.UIT.C, config = { align = "cr", id="mmio_enable", padding = 0.15 }, nodes = right_node }
         }
     }
+    --#endregion Left and Right Nodes
     settings.nodes[#settings.nodes + 1] = t
+    settings.nodes[#settings.nodes+1] = {
+        n = G.UIT.R,
+        config = {minw = 7, r = 0, minh = 0.35, align = "cm" },
+        nodes = {
+            create_toggle({
+                label = "Place MMiO Menu on Top",
+                ref_table = mmio.config,
+                ref_value = 'place_on_top',
+                callback = mmio:save_config(),
+                info = { "If enabled, the MMiO menu will be placed at the top of the options menu." },
+                info_scale = 0.35,
+            })
+            --{ n = G.UIT.T, config = { text = "Restart the game to apply changes.", scale = 0.3, colour = G.C.WHITE, juice = true, align = "cm" } },
+        }
+    }
+    
     local config = { n = G.UIT.R, config = { align = "tm", padding = 0 }, nodes = { settings } }
     nodes[#nodes + 1] = config
     return {

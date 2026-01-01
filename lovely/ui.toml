@@ -28,26 +28,6 @@ pattern="self.config.object:set_role(self.config.role or {role_type = 'Minor', m
 match_indent = true
 position="at"
 payload="if self.config.object then self.config.object:set_role(self.config.role or {role_type = 'Minor', major = self, xy_bond = 'Strong', wh_bond = 'Weak', scale_bond = 'Weak'}) end"
-# heres the part im constantly trying to fix
-# [[patches]]
-# [patches.pattern]
-# target="engine/ui.lua"
-# pattern="""
-# if v.UIT == G.UIT.T or v.UIT == G.UIT.B or v.UIT == G.UIT.O then
-#     v:align(0,0.5*(self.T.h - 2*padding - v.T.h))
-# else
-#     v:align(0,0.5*(self.T.h - self.content_dimensions.h))
-# end"""
-# match_indent = true
-# position="before"
-# # # payload="if v.T.h == nil then v.T.mmio='mmio_BAD'\nmmio.the_bad_one = v\nv.T.w = v.parent.T.w\nv.T.h = v.parent.T.h end"
-# # # payload="v:initialize_VT()"
-# # # eval SMODS.deepfind(G.OVERLAY_MENU:get_UIE_by_ID("spl_uhhhh").UIBox.parent.parent.parent.parent,'button_UIE','i',false)[3].table.button_UIE
-# # # x=11.1, y=5.822
-# payload="""if v.T.h == nil then print('[mmio] this is bad...')
-# v.T.h = 0.56
-# v.T.w = 0.56
-# end"""
 [[patches]]
 [patches.pattern]
 target = "engine/ui.lua"
@@ -64,15 +44,6 @@ payload = """function UIElement:set_alignments()
             v.T.w = _w or 2
         end
     end"""
-# [[patches]]
-# [patches.pattern]
-# target="engine/ui.lua"
-# pattern="v:align(0,0.5*(self.T.h - 2*padding - v.T.h))"
-# match_indent = true
-# position="at"
-# payload="v:align(0,0.5*(self.T.h - 2*padding - 0.56))"
-
-
 # added a change function argument to create_tabs
 [[patches]]
 [patches.pattern]
@@ -81,36 +52,27 @@ pattern = "tab_buttons[#tab_buttons+1] = UIBox_button({id = 'tab_but_'..(v.label
 match_indent = true
 position = "at"
 payload = "tab_buttons[#tab_buttons+1] = UIBox_button({id = 'tab_but_'..(v.label or ''), ref_table = v, button = args.change_func or 'change_tab', label = {v.label}, minh = 0.8*args.scale, minw = 2.5*args.scale, col = true, choice = true, scale = args.text_scale, chosen = v.chosen, func = v.func, colour = args.colour, focus_args = {type = 'none'}})"
-
-# eval SMODS.deepfind(G.OVERLAY_MENU,'Keybinds','v',false)[1].objtree[38].T
-# eval SMODS.deepfind(mmio.to_debug,'object','i',true)[1].table.object.children[1].T
-# [[patches]]
-# [patches.pattern]
-# target="functions/UI_definitions.lua"
-# pattern = "{n=G.UIT.O, config={object = check}}"
-# match_indent = true
-# position = "at"
-# payload = "{n=G.UIT.O, config={object = check, id=args.id}}"
-# [[patches]]
-# [patches.pattern]
-# target="engine/ui.lua"
-# pattern = "self:set_parent_child(v, UIE)"
-# match_indent = true
-# position = "before"
-# payload="if mmio.log_ts then print(k,v,node) end"
-# [[patches]]
-# [patches.pattern]
-# target="engine/ui.lua"
-# pattern = "local UIE = UIElement(parent, self, node.n, node.config)"
-# match_indent = true
-# position = "at"
-# payload="""
-# if type(node) =="number" then node = {n=node,config={colour=G.C.RED}} end
-# local UIE = UIElement(parent,self,node.n,node.config)"""
-# [[patches]]
-# [patches.pattern]
-# target="functions/UI_definitions.lua"
-# pattern = 'table.insert(but_UI_label, {n=G.UIT.R, config={align = "cm", padding = 0, minw = args.minw, maxw = args.maxw}, nodes={'
-# match_indent = true
-# position = "at"
-# payload = 'table.insert(but_UI_label, {n=G.UIT.R, config={align = "cm", colour=G.C.RED, padding = 0, minw = args.minw, maxw = args.maxw}, nodes={'
+# adds an id argument to the toggle
+[[patches]]
+[patches.pattern]
+target = "functions/UI_definitions.lua"
+pattern = "button = 'toggle_button', button_dist = 0.2, hover = true, toggle_callback = args.callback, func = 'toggle', focus_args = {funnel_to = true}}, nodes={"
+match_indent = true
+position = "at"
+payload = "button = 'toggle_button', button_dist = 0.2, hover = true, toggle_callback = args.callback, func = 'toggle', focus_args = {funnel_to = true}}, id = args.id or nil, nodes={"
+# Adds info scale to everything i think?
+# taken from my other mod :P
+[[patches]]
+[patches.pattern]
+target = "functions/UI_definitions.lua"
+pattern = "args.ref_value = args.ref_value or 'test'"
+match_indent = true
+position = "after"
+payload = "args.info_scale = args.info_scale or 0.25"
+[[patches]]
+[patches.pattern]
+target = "functions/UI_definitions.lua"
+pattern = "{n=G.UIT.T, config={text = v, scale = 0.25, colour = G.C.UI.TEXT_LIGHT}}"
+match_indent = true
+position = "at"
+payload = "{n=G.UIT.T, config={text = v, scale = args.info_scale, colour = G.C.UI.TEXT_LIGHT}}"

@@ -1,12 +1,12 @@
 ---@diagnostic disable: undefined-global
--- if not mmio then
---     mmio = {} -- me when config
--- end
+if not mmio then
+    mmio = {} -- me when config
+end
 -- i just realized mmio is easier but im using moim
 -- nvm i changed it
 mmio = SMODS.current_mod
 mmio.save_config = function(self)
-    SMODS.save_mod_config(self)
+	SMODS.save_mod_config(self)
 end
 mmio:save_config()
 local mod_path = "" .. SMODS.current_mod.path
@@ -18,15 +18,35 @@ assert(SMODS.load_file("functions.lua"))() -- me when load file
 -- here we are
 -- code taken from handy, which was taken from ankh by MathIsFun
 -- they misspelled it in their code lol
+-- mmio.place_on_top = true -- CHANGE IF YOU WANT IT ON THE BOTTOM INSTEAD
 local create_uibox_options_ref = create_UIBox_options
 function create_UIBox_options()
+	
 	local contents = create_uibox_options_ref()
-	table.insert(contents.nodes[1].nodes[1].nodes[1].nodes, UIBox_button({ label = { "MMiO" }, button = "mmio_generate_mod_select_menu", minw = 5, colour = HEX("FF0000") }))
+	if not mmio.config.enabled then return contents end
+	local button = UIBox_button({
+		label = { "MMiO" },
+		button = "mmio_generate_mod_select_menu",
+		minw = 5,
+		colour = HEX("FF0000")
+	})
+
+	if not mmio.config.place_on_top then
+		table.insert(contents.nodes[1].nodes[1].nodes[1].nodes, button)
+	else
+		contents.nodes[1].nodes[1].nodes[1].nodes = {button} -- clear it
+		-- table.insert(contents.nodes[1].nodes[1].nodes[1].nodes, button)
+		for _, n in pairs(create_uibox_options_ref().nodes[1].nodes[1].nodes[1].nodes) do
+			table.insert(contents.nodes[1].nodes[1].nodes[1].nodes, n)
+		end
+	end
 	return contents
 end
+
 function G.FUNCS.mmio_test_press(e)
-    print(e)
+	print(e)
 end
+
 --[[
 NOTES:
 SMODS.mod_list[find mod number].config_tab() - check if function but should be?
