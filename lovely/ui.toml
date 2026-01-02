@@ -36,12 +36,14 @@ match_indent = true
 position = "at"
 payload = """function UIElement:set_alignments()
     for k, v in pairs(self.children) do
+        if v.parent ~= nil then
         _w, _h = v.parent:set_wh()
         if v.T and not v.T.h then
             v.T.h = _h or 2
         end
         if v.T and not v.T.w then
             v.T.w = _w or 2
+        end
         end
     end"""
 # added a change function argument to create_tabs
